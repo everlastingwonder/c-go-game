@@ -44,26 +44,28 @@ typedef struct BOARD Board;
 *      FUNCTIONS      *
 **********************/
 int cmdParse(char*, char**);
-void move(int, int, Space, Board*);
+int move(char*, char*, char*, Board*);
 void saveGame(char*, Board*);
 int loadGame(char*, Board*);
 void display(int, Board*);
 void help();
 
 
-// Menu function -- handles all user input and passes data to other functions
+/*                  MAIN FUNCTION                  *
+*  Handles user input and passes it to the proper  *
+*  functions; also responsible for error handling  *
+*  and a few other miscellaneous tasks             */
 int main(int argc, char *argv[]) {
   // Welcome message
   printf("WELCOME TO CGG (C Go Game) %s\nBy Gus Wiedey\nType \'help\' for a list of commands.\n\n", VER_NUM);
 
   // Variable definitions
-  int a, i, j, row, col, valid, argCount, loadResult;
+  int a, i, j, valid, argCount, exitVal;
   int continueLoop = 1;
   char c, colChar, colMax;
   char cmd[CMD_LEN], exitString[60];
   char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
   Board *board;
-  Space sp;
 
   // malloc each element of **args
   for(i = 0; i < ARG_MAX; i++) {
@@ -114,60 +116,24 @@ int main(int argc, char *argv[]) {
       }
     }
     else if(!strcmp(args[0], "move")) {
-      valid = 1;
-
-      for(i = 0; i < strlen(args[1]); i++) {
-        if(!isdigit(args[1][i])) {
-          printf("ERROR: Invalid row argument \'%s\' - expected integer\n", args[1]);
-          valid = 0;
-        }
+      switch(argCount) {
+        case 3:
+        exitVal = move("!", args[1], args[2], board);
+        break;
+        case 4:
+        exitVal = move(args[1], args[2], args[3], board);
       }
-      if(!valid) {
-        continue;
+      exitVal = move(args[1], args[2], args[3], board);
+      switch(exitVal) {
+        // success/error codes go here
       }
-
-      sscanf(args[1], "%d", &row);
-      if((row < 1) || (row > board->dim)) {
-        printf("ERROR: Invalid row argument \'%s\' - expected value between 1 and %d\n", args[1], board->dim);
-        continue;
-      }
-
-      row--;
-      if(strlen(args[2]) != 1) {
-        printf("ERROR: Invalid column argument \'%s\' - expected single character\n", args[2]);
-        continue;
-      }
-
-      colChar = tolower(args[2][0]);
-      colMax = board->dim + 96;
-      if((colChar < 'a') || (colChar > colMax)) {
-        printf("ERROR: Invalid column argument \'%c\' - expected value between \'a\' and \'%c\'\n", colChar, colMax);
-        continue;
-      }
-
-      col = colChar - 97;
-      if(!strcmp(args[3], "white")) {
-        sp = white;
-      }
-      else if(!strcmp(args[3], "black")) {
-        sp = black;
-      }
-      else if(!strcmp(args[3], "empty")) {
-        sp = empty;
-      }
-      else {
-        printf("ERROR: Invalid color argument \'%s\' - expected either \'black\', \'white\', or \'empty\'\n", args[3]);
-        continue;
-      }
-
-      move(row, col, sp, board);
     }
     else if(!strcmp(args[0], "save")) {
       saveGame(args[1], board);
     }
     else if(!strcmp(args[0], "load")) {
-      loadResult = loadGame(args[1], board);
-      switch(loadResult) {
+      exitVal = loadGame(args[1], board);
+      switch(exitVal) {
         case 0:
         printf("Saved game successfully loaded from file \'%s\'.\n", args[1]);
         break;
@@ -227,7 +193,9 @@ int main(int argc, char *argv[]) {
 }
 
 
-// Command parse function -- takes raw command string, splits it on spaces, and returns array containing split arguments
+/*                CMDPARSE FUNCTION                *
+*  Takes raw command string, splits it on spaces,  *
+*  and returns number of strings in *args[] array  */
 int cmdParse(char *cmd, char *args[]) {
   // Variable definitions
   int i = 0; // current index in string cmd
@@ -254,14 +222,67 @@ int cmdParse(char *cmd, char *args[]) {
 }
 
 
-// Move function -- changes the state of one board space
-void move(int row, int col, Space color, Board *board) {
-  // This function is going to get WAY bigger in the future, since I intend to handle most of the actual rules checking and processing here
-  board->grid[row][col] = color;
+/*             MOVE FUNCTION             *
+*  > move                                *
+*  Changes the state of one board space  */
+int move(char *r, char *c, char *state, Board *board) {
+  // Variable definitions
+  int row, col;
+  Space sp;
+
+  // Do as much error checking as possible up front
+  // so everything else is neater and more efficient
+  if(r[0] == '!') {
+    if(sscanf(c, "%d%c", &row, &col) != 2) {
+      return -1;
+    }
+  } else {
+    if(sscanf(r, "%d", &row) != 1) {
+      return 1;
+    }
+    if(!isalpha(c[0])) {
+      return 2;
+    }
+  }
+
+  // Figure out what state the given space should be based on
+  // the first character of state (rather than the whole string),
+  // because this allows us to use a nice neat switch statement
+  // instead of an ugly chain of ifs and else-ifs
+  switch(state[0]) {
+    case 'e':
+    sp = empty;
+    break;
+    case 'w':
+    sp = white;
+    break;
+    case 'b':
+    sp = black;
+    break;
+    default:
+    return 3;
+    break;
+  }
+
+  // Translate column char into integer and check whether
+  // row and col are valid (i.e. between 0 and board->dim)
+  if(row >= board->dim) {
+    return 4;
+  }
+  col = (tolower(c[0]) - 97);
+  if(col >= board->dim) {
+    return 5;
+  }
+
+  // Change the actual space in board->grid and return 0 for success
+  board->grid[row][col] = sp;
+  return 0;
 }
 
 
-// Save function -- saves the current board state to a file
+/*             SAVEGAME FUNCTION             *
+*  > save                                    *
+*  Writes the current board state to a file  */
 void saveGame(char *fname, Board *board) {
   // Variable definitions
   int i, j;
@@ -284,7 +305,9 @@ void saveGame(char *fname, Board *board) {
 }
 
 
-// Load function -- loads a saved board state from a file
+/*           LOADGAME FUNCTION            *
+*  > load                                 *
+*  Reads a saved board state from a file  */
 int loadGame(char *fname, Board *board) {
   // Variable definitions
   int i, j, s;
@@ -352,7 +375,10 @@ int loadGame(char *fname, Board *board) {
 }
 
 
-// Show board function -- prints a representation of the current board state to stdout
+/*           DISPLAY FUNCTION            *
+*  > show                                *
+*  Prints a graphical representation of  *
+*  the current board state to stdout     */
 void display(int printIndex, Board *board) {
   // Variable definitions
   int i, j;
@@ -413,7 +439,9 @@ void display(int printIndex, Board *board) {
 }
 
 
-// Help function -- prints help message
+/*        HELP FUNCTION         *
+*  > help                       *
+*  Prints a brief help message  */
 void help() {
   printf("Valid commands: init, show, move, save, load, help, quit\n");
 }
