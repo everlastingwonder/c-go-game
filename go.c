@@ -43,7 +43,7 @@ typedef struct BOARD Board;
 /**********************
 *      FUNCTIONS      *
 **********************/
-char **cmdParse(char*, char**);
+int cmdParse(char*, char**);
 void move(int, int, Space, Board*);
 void saveGame(char*, Board*);
 int loadGame(char*, Board*);
@@ -57,11 +57,10 @@ int main(int argc, char *argv[]) {
   printf("WELCOME TO CGG (C Go Game) %s\nBy Gus Wiedey\nType \'help\' for a list of commands.\n\n", VER_NUM);
 
   // Variable definitions
-  int a, i, j, row, col, valid, loadResult;
+  int a, i, j, row, col, valid, argCount, loadResult;
   int continueLoop = 1;
   char c, colChar, colMax;
-  char *exitString = (char*)malloc(sizeof(char) * 100);
-  char *cmd = (char*)malloc(sizeof(char) * CMD_LEN);
+  char cmd[CMD_LEN], exitString[60];
   char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
   Board *board;
   Space sp;
@@ -75,7 +74,7 @@ int main(int argc, char *argv[]) {
   while(continueLoop) {
     printf("> ");
     fgets(cmd, CMD_LEN, stdin);
-    cmdParse(cmd, args);
+    argCount = cmdParse(cmd, args);
 
     if(!strcmp(args[0], "init")) {
       // Allocate memory for a new board of the correct size
@@ -229,7 +228,7 @@ int main(int argc, char *argv[]) {
 
 
 // Command parse function -- takes raw command string, splits it on spaces, and returns array containing split arguments
-char **cmdParse(char *cmd, char *args[]) {
+int cmdParse(char *cmd, char *args[]) {
   // Variable definitions
   int i = 0; // current index in string cmd
   int a = 0; // current index in array args
@@ -249,9 +248,9 @@ char **cmdParse(char *cmd, char *args[]) {
     i++;
   }
 
-  // Add final terminating null char and return
+  // Add final terminating null char and return number of arguments
   args[a][b] = '\0';
-  return args;
+  return (a + 1);
 }
 
 
