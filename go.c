@@ -125,7 +125,27 @@ int main(int argc, char *argv[]) {
       }
       exitVal = move(args[1], args[2], args[3], board);
       switch(exitVal) {
-        // success/error codes go here
+        case 0:
+        printf("a winner is you!");
+        break;
+        case -1:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
+        case 1:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
+        case 2:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
+        case 3:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
+        case 4:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
+        case 5:
+        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        break;
       }
     }
     else if(!strcmp(args[0], "save")) {
