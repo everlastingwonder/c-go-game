@@ -44,10 +44,9 @@ typedef struct BOARD Board;
 *      FUNCTIONS      *
 **********************/
 char **cmdParse(char*, char**);
-Board *newGame(BoardSize, Board*);
-Board *move(int, int, Space, Board*); //not done
+void move(int, int, Space, Board*);
 void saveGame(char*, Board*);
-Board *loadGame(char*, Board*);
+int loadGame(char*, Board*);
 void display(int, Board*);
 void help();
 
@@ -58,15 +57,14 @@ int main(int argc, char *argv[]) {
   printf("WELCOME TO CGG (C Go Game) %s\nBy Gus Wiedey\nType \'help\' for a list of commands.\n\n", VER_NUM);
 
   // Variable definitions
-  int i, a, row, col, valid;
+  int a, i, j, row, col, valid, loadResult;
   int continueLoop = 1;
   char c, colChar, colMax;
   char *exitString = (char*)malloc(sizeof(char) * 100);
   char *cmd = (char*)malloc(sizeof(char) * CMD_LEN);
   char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
-  Board *board, *tmp;
+  Board *board;
   Space sp;
-  BoardSize s;
 
   // malloc each element of **args
   for(i = 0; i < ARG_MAX; i++) {
@@ -79,15 +77,34 @@ int main(int argc, char *argv[]) {
     fgets(cmd, CMD_LEN, stdin);
     cmdParse(cmd, args);
 
-    if(!strcmp(args[0], "new")) {
-      if(!strcmp(args[1], "beginner")) { s = beginner; }       // 9x9
-      else if(!strcmp(args[1], "small")) { s = small; }        // 13x13
-      else if(!strcmp(args[1], "standard")) { s = standard; }  // 19x19
+    if(!strcmp(args[0], "init")) {
+      // Allocate memory for a new board of the correct size
+      if(!strcmp(args[1], "beginner")) {
+        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
+        board->dim = beginner;
+      }
+      else if(!strcmp(args[1], "small")) {
+        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
+        board->dim = small;
+      }
+      else if(!strcmp(args[1], "standard")) {
+        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 19));
+        board->dim = standard;
+      }
       else {
         printf("ERROR: Invalid size argument \'%s\' - expected either \'beginner\', \'small\', or \'standard\'\n", args[1]);
         continue;
       }
-      board = newGame(s, board);
+
+      // Allocate memory for grid rows and fill grid with empty spaces
+      for(i = 0; i < board->dim; i++) {
+        board->grid[i] = (Space*)malloc(sizeof(Space) * board->dim);
+        for(j = 0; j < board->dim; j++) {
+          board->grid[i][j] = empty;
+        }
+      }
+
+      printf("New game created (board size %dx%d)\n", board->dim, board->dim);
     }
     else if(!strcmp(args[0], "show")) {
       if(!strcmp(args[1], "noindex")) {
@@ -144,18 +161,26 @@ int main(int argc, char *argv[]) {
         continue;
       }
 
-      board = move(row, col, sp, board);
+      move(row, col, sp, board);
     }
     else if(!strcmp(args[0], "save")) {
       saveGame(args[1], board);
     }
     else if(!strcmp(args[0], "load")) {
-      tmp = loadGame(args[1], board);
-      if(tmp != NULL) {
-        board = tmp;
-      }
-      else {
-        printf("(Don't worry, the current game wasn't overwritten!)\n");
+      loadResult = loadGame(args[1], board);
+      switch(loadResult) {
+        case 0:
+        printf("Saved game successfully loaded from file \'%s\'.\n", args[1]);
+        break;
+        case 1:
+        printf("ERROR: Could not open file \'%s\'\n", args[1]);
+        break;
+        case 2:
+        printf("ERROR: Invalid board size parameter in file \'%s\'\n", args[1]);
+        break;
+        case 3:
+        printf("ERROR: Invalid board state data in file \'%s\'\n", args[1]);
+        break;
       }
     }
     else if(!strcmp(args[0], "help")) {
@@ -182,24 +207,24 @@ int main(int argc, char *argv[]) {
     c = getc(stdin);
     switch(tolower(c)) {
       case 'y':
-        printf("\nWhere do you want to save your game?\nFilename: ");
-        fgets(cmd, CMD_LEN, stdin);
-        cmdParse(cmd, args);
-        saveGame(args[0], board);
-        printf("Game saved to file %s\n", args[0]);
-        continueLoop = 0;
-        break;
+      printf("\nWhere do you want to save your game?\nFilename: ");
+      fgets(cmd, CMD_LEN, stdin);
+      cmdParse(cmd, args);
+      saveGame(args[0], board);
+      printf("Game saved to file %s\n", args[0]);
+      continueLoop = 0;
+      break;
       case 'n':
-        printf("\n");
-        continueLoop = 0;
-        break;
+      printf("\n");
+      continueLoop = 0;
+      break;
       default:
-        strcpy(exitString, "Please enter either y or n: ");
-        continueLoop = 1;
-        break;
+      strcpy(exitString, "Please enter either y or n: ");
+      continueLoop = 1;
+      break;
     }
   } while(continueLoop);
-  printf("\nGoodbye!\n\n");
+  printf("Goodbye!\n\n");
 }
 
 
@@ -230,33 +255,10 @@ char **cmdParse(char *cmd, char *args[]) {
 }
 
 
-// New game function -- starts a new game, defining a new Board structure of the proper size
-Board *newGame(BoardSize s, Board *board) {
-  // Variable definitions
-  int i, j;
-
-  // Define new instance of struct Board
-  board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * s));
-  board->dim = s;
-  for(i = 0; i < board->dim; i++) {
-    board->grid[i] = (Space*)malloc(sizeof(Space) * board->dim);
-  }
-
-  // Fill board with empty spaces and return
-  for(i = 0; i < board->dim; i++) {
-    for(j = 0; j < board->dim; j++) {
-      board->grid[i][j] = empty;
-    }
-  }
-  return board;
-}
-
-
 // Move function -- changes the state of one board space
-Board *move(int row, int col, Space color, Board *board) {
-  // This function is probably going to get a _lot_ bigger in the future, since I intend to handle most of the actual rules checking and processing here
+void move(int row, int col, Space color, Board *board) {
+  // This function is going to get WAY bigger in the future, since I intend to handle most of the actual rules checking and processing here
   board->grid[row][col] = color;
-  return board;
 }
 
 
@@ -284,58 +286,70 @@ void saveGame(char *fname, Board *board) {
 
 
 // Load function -- loads a saved board state from a file
-Board *loadGame(char *fname, Board *board) {
+int loadGame(char *fname, Board *board) {
   // Variable definitions
   int i, j, s;
   char *rowData = (char*)malloc(sizeof(char) * 25);
   FILE *fp = fopen(fname, "r");
-  BoardSize bsize;
 
+  printf("Warning: Current game will be overwritten!\n");
+  printf("Loading game from file");
+
+  // Error message if file fails to open
   if(fp == NULL) {
-    printf("ERROR: Could not open file \'%s\'\n", fname);
-    return NULL;
+    return 1;
   }
+  printf(" .");
 
-  // Scan size and make sure it is valid
+  // Scan size, make sure it's valid, and malloc() board struct
   fscanf(fp, "%d", &s);
   switch(s) {
     case 9:
+    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
+    board->dim = beginner;
+    break;
     case 13:
+    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
+    board->dim = small;
+    break;
     case 19:
-      bsize = s;
-      board = newGame(bsize, board);
-      break;
+    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 19));
+    board->dim = standard;
+    break;
     default:
-      printf("ERROR: Invalid board size in file \'%s\'\n", fname);
-      return NULL;
-      break;
+    return 2;
+    break;
   }
 
-  // Scan board configuration
+  // malloc() each Space* pointer in board->grid
+  for(i = 0; i < board->dim; i++) {
+    board->grid[i] = (Space*)malloc(sizeof(Space) * board->dim);
+  }
+  printf(" .");
+
+  // Scan board configuration from file
   for(i = 0; i < board->dim; i++) {
     fgets(rowData, 25, fp);
     for(j = 0; j < board->dim; j++) {
       switch(rowData[j]) {
         case '0':
-          board->grid[i][j] = empty;
-          break;
+        board->grid[i][j] = empty;
+        break;
         case '1':
-          board->grid[i][j] = white;
-          break;
+        board->grid[i][j] = white;
+        break;
         case '2':
-          board->grid[i][j] = black;
-          break;
+        board->grid[i][j] = black;
+        break;
         default:
-          printf("ERROR: Invalid board state data in file \'%s\'\n", fname);
-          return NULL;
-          break;
+        return 3;
+        break;
       }
     }
   }
+  printf(" .\n");
 
-  // Print success message and return loaded struct
-  printf("Saved game successfully loaded from file \'%s\'.\n", fname);
-  return board;
+  return 0;
 }
 
 
@@ -368,14 +382,14 @@ void display(int printIndex, Board *board) {
     for(j = 0; j < board->dim; i++) {
       switch(board->grid[i][j]) {
         case empty:
-          printf(" ");
-          break;
+        printf(" ");
+        break;
         case white:
-          printf("@");
-          break;
+        printf("@");
+        break;
         case black:
-          printf("O");
-          break;
+        printf("O");
+        break;
       }
 
       if(j != (board->dim - 1)) {
@@ -402,5 +416,5 @@ void display(int printIndex, Board *board) {
 
 // Help function -- prints help message
 void help() {
-  printf("Sorry, nothing here yet!\n");
+  printf("Valid commands: init, show, move, save, load, help, quit\n");
 }
