@@ -4,30 +4,14 @@
 * Version 0.1.0
 */
 
-/**********************
-*  PREPROCESSOR CRAP  *
-**********************/
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "defs.h"
 
-#define VER_NUM "v0.1.0"
-#define CMD_LEN 50
-#define ARG_MAX 5
-#define ARG_LEN 10
-
-/**********************
-*      FUNCTIONS      *
-**********************/
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
 void saveGame(char*, Board*);
 int loadGame(char*, Board*);
 void display(int, Board*);
 void help();
-
 
 int main(int argc, char *argv[]) {
   // Welcome message
@@ -185,7 +169,6 @@ int main(int argc, char *argv[]) {
   } while(continueLoop);
   printf("Goodbye!\n\n");
 }
-
 
 int cmdParse(char *cmd, char *args[]) {
   // Variable definitions
