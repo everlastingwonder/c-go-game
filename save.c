@@ -13,7 +13,7 @@ void saveGame(char *fname, Board *board) {
     for(j = 0; j < board->dim; j++) {
       fprintf(fp, "%d", board->grid[i][j]);
     }
-    printf("\n");
+    fprintf(fp, "\n");
   }
 
   // Close file and print "game saved" message
@@ -25,11 +25,11 @@ void saveGame(char *fname, Board *board) {
 int loadGame(char *fname, Board *board) {
   // Variable definitions
   int i, j, s;
-  char *rowData = (char*)malloc(sizeof(char) * 25);
+  char rowData[25];
   FILE *fp = fopen(fname, "r");
 
   printf("Warning: Current game will be overwritten!\n");
-  printf("Loading game from file");
+  printf("Loading game from file %s", fname);
 
   // Error message if file fails to open
   if(fp == NULL) {
@@ -65,7 +65,7 @@ int loadGame(char *fname, Board *board) {
 
   // Scan board configuration from file
   for(i = 0; i < board->dim; i++) {
-    fgets(rowData, 25, fp);
+    fscanf(fp, "%s", rowData);
     for(j = 0; j < board->dim; j++) {
       switch(rowData[j]) {
         case '0':
@@ -83,7 +83,7 @@ int loadGame(char *fname, Board *board) {
       }
     }
   }
-  printf(" .\n");
+  printf(" .");
 
   return 0;
 }

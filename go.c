@@ -1,7 +1,7 @@
 /*
 * CGG (C Go Game)
 * By Gus Wiedey
-* Version 0.1.0
+* Version 0.1.1
 */
 
 #include "defs.h"
@@ -10,7 +10,7 @@ int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
 void saveGame(char*, Board*);
 int loadGame(char*, Board*);
-void display(int, Board*);
+void display(Board*);
 void help();
 
 int main(int argc, char *argv[]) {
@@ -66,12 +66,7 @@ int main(int argc, char *argv[]) {
       printf("New game created (board size %dx%d)\n", board->dim, board->dim);
     }
     else if(!strcmp(args[0], "show")) {
-      if(!strcmp(args[1], "noindex")) {
-        display(0, board);
-      }
-      else {
-        display(1, board);
-      }
+        display(board);
     }
     else if(!strcmp(args[0], "move")) {
       switch(argCount) {
@@ -80,29 +75,29 @@ int main(int argc, char *argv[]) {
         break;
         case 4:
         exitVal = move(args[1], args[2], args[3], board);
+        break;
       }
-      exitVal = move(args[1], args[2], args[3], board);
       switch(exitVal) {
         case 0:
-        printf("a winner is you!");
+        // move() exited successfully; this is just here in case I ever want to add a message for it
         break;
         case -1:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
         case 1:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
         case 2:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
         case 3:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
         case 4:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
         case 5:
-        printf("nice job breaking it dipshit, this is why we can\'t have nice things");
+        printf("uh oh something is borken\n");
         break;
       }
     }
@@ -113,16 +108,16 @@ int main(int argc, char *argv[]) {
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
         case 0:
-        printf("Saved game successfully loaded from file \'%s\'.\n", args[1]);
+        printf("\nSaved game successfully loaded from file \'%s\'.\n", args[1]);
         break;
         case 1:
-        printf("ERROR: Could not open file \'%s\'\n", args[1]);
+        printf("\nERROR: Could not open file \'%s\'\n", args[1]);
         break;
         case 2:
-        printf("ERROR: Invalid board size parameter in file \'%s\'\n", args[1]);
+        printf("\nERROR: Invalid board size parameter in file \'%s\'\n", args[1]);
         break;
         case 3:
-        printf("ERROR: Invalid board state data in file \'%s\'\n", args[1]);
+        printf("\nERROR: Invalid board state data in file \'%s\'\n", args[1]);
         break;
       }
     }
