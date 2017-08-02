@@ -17,7 +17,7 @@ void saveGame(char *fname, Board *board) {
   }
 
   // Close file and print "game saved" message
-  printf("Game saved to file \'%s\'.\n", fname);
+  printf("Game saved to file \'%s\'\n", fname);
   fclose(fp);
 }
 

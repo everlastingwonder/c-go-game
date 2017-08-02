@@ -111,20 +111,18 @@ int main(int argc, char *argv[]) {
 
   // Ask user if they want to save before quitting (and then quit)
   strcpy(exitString, "Do you want to save your game before quitting? (y/n): ");
-  loop = 0;
   do {
     printf("%s", exitString);
     c = getc(stdin);
+    printf("\n\nc == \'%c\'\n\n", c);
     switch(tolower(c)) {
       case 'y':
       printf("\nEnter a name for your save file: ");
-      fgets(cmd, CMD_LEN, stdin);
-      cmdParse(cmd, args);
-      saveGame(args[0], board);
-      printf("Game saved to file %s\n", args[0]);
-      break;
-      /****************/
+      scanf("%s", cmd);
+      saveGame(cmd, board);
+      // break intentionally omitted here
       case 'n':
+      loop = 0;
       printf("\n");
       break;
       /****************/
