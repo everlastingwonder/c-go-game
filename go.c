@@ -19,11 +19,11 @@ int main(int argc, char *argv[]) {
 
   // Variable definitions
   int a, i, j, valid, argCount, exitVal;
-  int continueLoop = 1;
+  int loop = 1;
   char c, colChar, colMax;
   char cmd[CMD_LEN], exitString[60];
   char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
-  Board *board;
+  Board *board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * DIM_MAX))
 
   // malloc each element of **args
   for(i = 0; i < ARG_MAX; i++) {
@@ -31,16 +31,16 @@ int main(int argc, char *argv[]) {
   }
 
   // Read & process user commands
-  while(continueLoop) {
+  while(loop) {
     printf("> ");
     fgets(cmd, CMD_LEN, stdin);
     argCount = cmdParse(cmd, args);
 
     if(!strcmp(args[0], "init")) {
       // Allocate memory for a new board of the correct size
-      if(!strcmp(args[1], "beginner")) {
+      if(!strcmp(args[1], "tiny")) {
         board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
-        board->dim = beginner;
+        board->dim = tiny;
       }
       else if(!strcmp(args[1], "small")) {
         board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         board->dim = standard;
       }
       else {
-        printf("ERROR: Invalid size argument \'%s\' - expected either \'beginner\', \'small\', or \'standard\'\n", args[1]);
+        printf("ERROR: Invalid size argument \'%s\' - expected either \'tiny\', \'small\', or \'standard\'\n", args[1]);
         continue;
       }
 
@@ -70,35 +70,18 @@ int main(int argc, char *argv[]) {
     }
     else if(!strcmp(args[0], "move")) {
       switch(argCount) {
-        case 3:
-        exitVal = move("!", args[1], args[2], board);
-        break;
-        case 4:
-        exitVal = move(args[1], args[2], args[3], board);
-        break;
+        case 3 : exitVal = move("!", args[1], args[2], board); _B;
+        case 4 : exitVal = move(args[1], args[2], args[3], board); _B;
+        default : printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
       }
       switch(exitVal) {
-        case 0:
-        // move() exited successfully; this is just here in case I ever want to add a message for it
-        break;
-        case -1:
-        printf("uh oh something is borken\n");
-        break;
-        case 1:
-        printf("uh oh something is borken\n");
-        break;
-        case 2:
-        printf("uh oh something is borken\n");
-        break;
-        case 3:
-        printf("uh oh something is borken\n");
-        break;
-        case 4:
-        printf("uh oh something is borken\n");
-        break;
-        case 5:
-        printf("uh oh something is borken\n");
-        break;
+        case 0 : _B; // An exit value of 0 indicates that move() completed successfully; this case is just here as a placeholder
+        case -1 : printf("uh oh something is borken\n"); _B;
+        case 1 : printf("uh oh something is borken\n"); _B;
+        case 2 : printf("uh oh something is borken\n"); _B;
+        case 3 : printf("uh oh something is borken\n"); _B;
+        case 4 : printf("uh oh something is borken\n"); _B;
+        case 5 : printf("uh oh something is borken\n"); _B;
       }
     }
     else if(!strcmp(args[0], "save")) {
@@ -107,26 +90,18 @@ int main(int argc, char *argv[]) {
     else if(!strcmp(args[0], "load")) {
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
-        case 0:
-        printf("\nSaved game successfully loaded from file \'%s\'.\n", args[1]);
-        break;
-        case 1:
-        printf("\nERROR: Could not open file \'%s\'\n", args[1]);
-        break;
-        case 2:
-        printf("\nERROR: Invalid board size parameter in file \'%s\'\n", args[1]);
-        break;
-        case 3:
-        printf("\nERROR: Invalid board state data in file \'%s\'\n", args[1]);
-        break;
+        case 0 : printf("\nSaved game successfully loaded from file \'%s\'.\n", args[1]); _B;
+        case 1 : printf("\nERROR: Could not open file \'%s\'\n", args[1]); _B;
+        case 2 : printf("\nERROR: Invalid board size parameter in file \'%s\'\n", args[1]); _B;
+        case 3 : printf("\nERROR: Invalid board state data in file \'%s\'\n", args[1]); _B;
       }
     }
     else if(!strcmp(args[0], "help")) {
       help();
     }
     else if(!strcmp(args[0], "quit")) {
-      // set continueLoop to false so that loop ends
-      continueLoop = 0;
+      // set loop to false so that loop ends
+      loop = 0;
     }
     else if(!strcmp(args[0], "")) {
       // extra condition to prevent program from printing error message if user simply hits enter with no input
@@ -140,28 +115,26 @@ int main(int argc, char *argv[]) {
 
   // Ask user if they want to save before quitting (and then quit)
   strcpy(exitString, "Do you want to save your game before quitting? (y/n): ");
+  loop = 0;
   do {
     printf("%s", exitString);
     c = getc(stdin);
     switch(tolower(c)) {
       case 'y':
-      printf("\nWhere do you want to save your game?\nFilename: ");
+      printf("\nFile to save game to: ");
       fgets(cmd, CMD_LEN, stdin);
       cmdParse(cmd, args);
       saveGame(args[0], board);
-      printf("Game saved to file %s\n", args[0]);
-      continueLoop = 0;
-      break;
+      printf("Game saved to file %s\n", args[0]); _B;
+      /****************/
       case 'n':
-      printf("\n");
-      continueLoop = 0;
-      break;
+      printf("\n"); _B;
+      /****************/
       default:
       strcpy(exitString, "Please enter either y or n: ");
-      continueLoop = 1;
-      break;
+      loop = 1; _B;
     }
-  } while(continueLoop);
+  } while(loop);
   printf("Goodbye!\n\n");
 }
 

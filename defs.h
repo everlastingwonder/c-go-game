@@ -1,3 +1,6 @@
+#ifndef _DEFS_H_
+#define _DEFS_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +10,8 @@
 #define CMD_LEN 50
 #define ARG_MAX 5
 #define ARG_LEN 10
+#define DIM_MAX 19
+#define _B break
 
 enum SPACE {
   empty = 0,
@@ -16,7 +21,7 @@ enum SPACE {
 typedef enum SPACE Space;
 
 enum BOARDSIZE {
-  beginner = 9,
+  tiny = 9,
   small = 13,
   standard = 19
 };
@@ -27,3 +32,5 @@ struct BOARD {
   Space *grid[];
 };
 typedef struct BOARD Board;
+
+#endif /* _DEFS_H_ */

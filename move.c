@@ -16,22 +16,14 @@ int move(char *r, char *c, char *state, Board *board) {
   }
 
   // Figure out what state the given space should be based on
-  // the first character of state (rather than the whole string),
+  // the first character of *state (rather than the whole string),
   // because this allows us to use a nice neat switch statement
   // instead of an ugly chain of ifs and else-ifs
   switch(state[0]) {
-    case 'e':
-    sp = empty;
-    break;
-    case 'w':
-    sp = white;
-    break;
-    case 'b':
-    sp = black;
-    break;
-    default:
-    return 3;
-    break;
+    case 'e' : sp = empty; _B;
+    case 'w' : sp = white; _B;
+    case 'b' : sp = black; _B;
+    default : return 3; _B;
   }
 
   // Translate column char into integer and check whether

@@ -23,15 +23,9 @@ void display(Board *board) {
     // Print an actual row with pieces in it
     for(j = 0; j < board->dim; j++) {
       switch(board->grid[i][j]) {
-        case empty:
-        printf(" ");
-        break;
-        case white:
-        printf("@");
-        break;
-        case black:
-        printf("O");
-        break;
+        case empty : printf(" "); _B;
+        case white : printf("@"); _B;
+        case black : printf("O"); _B;
       }
 
       if(j != (board->dim - 1)) {

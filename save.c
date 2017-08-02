@@ -42,19 +42,18 @@ int loadGame(char *fname, Board *board) {
   switch(s) {
     case 9:
     board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
-    board->dim = beginner;
-    break;
+    board->dim = tiny; _B;
+    /****************/
     case 13:
     board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
-    board->dim = small;
-    break;
+    board->dim = small; _B;
+    /****************/
     case 19:
     board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 19));
-    board->dim = standard;
-    break;
+    board->dim = standard; _B;
+    /****************/
     default:
-    return 2;
-    break;
+    return 2; _B;
   }
 
   // malloc() each Space* pointer in board->grid
@@ -68,18 +67,10 @@ int loadGame(char *fname, Board *board) {
     fscanf(fp, "%s", rowData);
     for(j = 0; j < board->dim; j++) {
       switch(rowData[j]) {
-        case '0':
-        board->grid[i][j] = empty;
-        break;
-        case '1':
-        board->grid[i][j] = white;
-        break;
-        case '2':
-        board->grid[i][j] = black;
-        break;
-        default:
-        return 3;
-        break;
+        case '0' : board->grid[i][j] = empty; _B;
+        case '1' : board->grid[i][j] = white; _B;
+        case '2' : board->grid[i][j] = black; _B;
+        default : return 3; _B;
       }
     }
   }
