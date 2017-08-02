@@ -7,9 +7,9 @@
 #include <ctype.h>
 
 #define VER_NUM "v0.2"
-#define CMD_LEN 50
+#define CMD_LEN 100
 #define ARG_MAX 5
-#define ARG_LEN 10
+#define ARG_LEN 20
 #define DIM_MAX 19
 #define _B break
 

@@ -118,7 +118,14 @@ int main(int argc, char *argv[]) {
     switch(tolower(c)) {
       case 'y':
       printf("\nEnter a name for your save file: ");
-      scanf("%s", cmd);
+      fgets(cmd, CMD_LEN, stdin); // No, this isn't a typo. Two fgets() calls are needed here; the first one clears out any leftover
+      fgets(cmd, CMD_LEN, stdin); // input in the stdin buffer, and the second one reads the string that we're actually looking for.
+      for(i = 0; i < CMD_LEN; i++) {
+        if(cmd[i] == '\n') {
+          cmd[i] = '\0';
+          break;
+        }
+      }
       saveGame(cmd, board);
       // break intentionally omitted here
       case 'n':
