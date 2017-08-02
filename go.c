@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   char cmd[CMD_LEN], exitString[60];
 
   // Create struct pointer to represent gameboard and allocate memory for board (and each row of board->grid)
-  Board *board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * DIM_MAX))
+  Board *board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * DIM_MAX));
   for(i = 0; i < DIM_MAX; i++) {
     board->grid[i] = (Space*)malloc(sizeof(Space) * DIM_MAX);
   }
@@ -86,10 +86,10 @@ int main(int argc, char *argv[]) {
     else if(!strcmp(args[0], "load")) {
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
-        case 0 : printf("\nGame data successfully loaded.\n", args[1]); _B;
-        case 1 : printf("\nERROR: Failed to open file \'%s\'\n", args[1]); _B;
-        case 2 : printf("\nERROR: Invalid board size parameter in file \'%s\'\n", args[1]); _B;
-        case 3 : printf("\nERROR: Invalid board state data in file \'%s\'\n", args[1]); _B;
+        case 0 : printf("\nGame data successfully loaded.\n"); _B;
+        case 1 : printf("\nERROR: Failed to open file.\n"); _B;
+        case 2 : printf("\nERROR: Invalid board size parameter.\n"); _B;
+        case 3 : printf("\nERROR: Invalid board state data.'\n"); _B;
       }
     }
     else if(!strcmp(args[0], "help")) {
