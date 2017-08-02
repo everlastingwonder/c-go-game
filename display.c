@@ -12,7 +12,7 @@ void display(Board *board) {
     printf("  %c", col);
     col++;
   }
-  printf("\n\n");
+  printf("\n");
 
   // Loop to print out actual board state
   for(i = 0; i < board->dim; i++) {

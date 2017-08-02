@@ -13,5 +13,5 @@ save.o : save.c defs.h
 display.o : display.c defs.h
 	gcc -c display.c
 
-help.o : help.c
+help.o : help.c defs.h
 	gcc -c help.c
