@@ -17,10 +17,6 @@ bin/display.o : display.c defs.h
 	gcc -c display.c
 	mv display.o bin/
 
-<<<<<<< HEAD
-help.o : help.c defs.h
-=======
-bin/help.o : help.c
->>>>>>> Edit Makefile so .o files go in bin/ (plus a few bug fixes)
+bin/help.o : help.c defs.h
 	gcc -c help.c
 	mv help.o bin/
