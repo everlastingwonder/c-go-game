@@ -28,39 +28,24 @@ int loadGame(char *fname, Board *board) {
   char rowData[25];
   FILE *fp = fopen(fname, "r");
 
-  printf("Warning: Current game will be overwritten!\n");
-  printf("Loading game from file %s", fname);
+  printf("Loading saved game from file %s ", fname);
 
   // Error message if file fails to open
   if(fp == NULL) {
     return 1;
   }
-  printf(" .");
+  printf(". ");
 
-  // Scan size, make sure it's valid, and malloc() board struct
+  // Scan size, make sure it's valid, and set board->dim appropriately
   fscanf(fp, "%d", &s);
   switch(s) {
-    case 9:
-    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
-    board->dim = tiny; _B;
-    /****************/
-    case 13:
-    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
-    board->dim = small; _B;
-    /****************/
-    case 19:
-    board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 19));
-    board->dim = standard; _B;
-    /****************/
-    default:
-    return 2; _B;
+    case 9 : board->dim = tiny; _B;
+    case 13 : board->dim = small; _B;
+    case 19 : board->dim = standard; _B;
+    default : return 2; _B;
   }
 
-  // malloc() each Space* pointer in board->grid
-  for(i = 0; i < board->dim; i++) {
-    board->grid[i] = (Space*)malloc(sizeof(Space) * board->dim);
-  }
-  printf(" .");
+  printf(". ");
 
   // Scan board configuration from file
   for(i = 0; i < board->dim; i++) {
@@ -74,7 +59,7 @@ int loadGame(char *fname, Board *board) {
       }
     }
   }
-  printf(" .");
+  printf(". ");
 
   return 0;
 }

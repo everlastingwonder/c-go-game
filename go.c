@@ -22,10 +22,15 @@ int main(int argc, char *argv[]) {
   int loop = 1;
   char c, colChar, colMax;
   char cmd[CMD_LEN], exitString[60];
-  char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
-  Board *board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * DIM_MAX))
 
-  // malloc each element of **args
+  // Create struct pointer to represent gameboard and allocate memory for board (and each row of board->grid)
+  Board *board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * DIM_MAX))
+  for(i = 0; i < DIM_MAX; i++) {
+    board->grid[i] = (Space*)malloc(sizeof(Space) * DIM_MAX);
+  }
+
+  // Create (and allocate memory for) array of strings to hold processed user input from cmdParse
+  char **args = (char**)malloc(sizeof(char*) * ARG_MAX);
   for(i = 0; i < ARG_MAX; i++) {
     args[i] = (char*)malloc(sizeof(char) * ARG_LEN);
   }
@@ -37,27 +42,17 @@ int main(int argc, char *argv[]) {
     argCount = cmdParse(cmd, args);
 
     if(!strcmp(args[0], "init")) {
-      // Allocate memory for a new board of the correct size
-      if(!strcmp(args[1], "tiny")) {
-        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 9));
-        board->dim = tiny;
-      }
-      else if(!strcmp(args[1], "small")) {
-        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 13));
-        board->dim = small;
-      }
-      else if(!strcmp(args[1], "standard")) {
-        board = (Board*)malloc(sizeof(Board) + (sizeof(Space*) * 19));
-        board->dim = standard;
-      }
+      // Set board->dim to the correct size
+      if(!strcmp(args[1], "tiny")) { board->dim = tiny; }
+      else if(!strcmp(args[1], "small")) { board->dim = small; }
+      else if(!strcmp(args[1], "standard")) { board->dim = standard; }
       else {
         printf("ERROR: Invalid size argument \'%s\' - expected either \'tiny\', \'small\', or \'standard\'\n", args[1]);
         continue;
       }
 
-      // Allocate memory for grid rows and fill grid with empty spaces
+      // Fill grid with empty spaces
       for(i = 0; i < board->dim; i++) {
-        board->grid[i] = (Space*)malloc(sizeof(Space) * board->dim);
         for(j = 0; j < board->dim; j++) {
           board->grid[i][j] = empty;
         }
@@ -72,10 +67,11 @@ int main(int argc, char *argv[]) {
       switch(argCount) {
         case 3 : exitVal = move("!", args[1], args[2], board); _B;
         case 4 : exitVal = move(args[1], args[2], args[3], board); _B;
-        default : printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
+        default : exitVal = -99; _B;
       }
       switch(exitVal) {
         case 0 : _B; // An exit value of 0 indicates that move() completed successfully; this case is just here as a placeholder
+        case -99: printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
         case -1 : printf("uh oh something is borken\n"); _B;
         case 1 : printf("uh oh something is borken\n"); _B;
         case 2 : printf("uh oh something is borken\n"); _B;
@@ -90,8 +86,8 @@ int main(int argc, char *argv[]) {
     else if(!strcmp(args[0], "load")) {
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
-        case 0 : printf("\nSaved game successfully loaded from file \'%s\'.\n", args[1]); _B;
-        case 1 : printf("\nERROR: Could not open file \'%s\'\n", args[1]); _B;
+        case 0 : printf("\nGame data successfully loaded.\n", args[1]); _B;
+        case 1 : printf("\nERROR: Failed to open file \'%s\'\n", args[1]); _B;
         case 2 : printf("\nERROR: Invalid board size parameter in file \'%s\'\n", args[1]); _B;
         case 3 : printf("\nERROR: Invalid board state data in file \'%s\'\n", args[1]); _B;
       }
@@ -121,18 +117,21 @@ int main(int argc, char *argv[]) {
     c = getc(stdin);
     switch(tolower(c)) {
       case 'y':
-      printf("\nFile to save game to: ");
+      printf("\nEnter a name for your save file: ");
       fgets(cmd, CMD_LEN, stdin);
       cmdParse(cmd, args);
       saveGame(args[0], board);
-      printf("Game saved to file %s\n", args[0]); _B;
+      printf("Game saved to file %s\n", args[0]);
+      break;
       /****************/
       case 'n':
-      printf("\n"); _B;
+      printf("\n");
+      break;
       /****************/
       default:
       strcpy(exitString, "Please enter either y or n: ");
-      loop = 1; _B;
+      loop = 1;
+      break;
     }
   } while(loop);
   printf("Goodbye!\n\n");
