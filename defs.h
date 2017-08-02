@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define VER_NUM "v0.1.1"
+#define VER_NUM "v0.2"
 #define CMD_LEN 50
 #define ARG_MAX 5
 #define ARG_LEN 10

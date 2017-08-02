@@ -1,7 +1,7 @@
 /*
 * CGG (C Go Game)
 * By Gus Wiedey
-* Version 0.1.1
+* Version 0.2
 */
 
 #include "defs.h"
@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
   strcpy(exitString, "Do you want to save your game before quitting? (y/n): ");
   do {
     printf("%s", exitString);
-    c = getc(stdin);
-    printf("\n\nc == \'%c\'\n\n", c);
+    c = fgetc(stdin);
+    if(c == '\n') { c = fgetc(stdin); }
     switch(tolower(c)) {
       case 'y':
       printf("\nEnter a name for your save file: ");
