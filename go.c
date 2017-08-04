@@ -6,6 +6,7 @@
 
 #include "defs.h"
 #include "chash.h"
+#include "hashes.h"
 
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
@@ -41,72 +42,72 @@ int main(int argc, char *argv[]) {
     printf("> ");
     fgets(cmd, CMD_LEN, stdin);
     argCount = cmdParse(cmd, args);
+    if(!strcmp(args[0], "")) {
+      // Extra condition to prevent program from printing an error
+      // message if user simply hits enter without typing anything.
+      // (I left this as a standalone condition rather than putting
+      // it in the switch statement because I'm not sure how chash()
+      // will behave with an empty string as input)
+      continue;
+    }
 
-    if(!strcmp(args[0], "init")) {
+    switch(chash(args[0])) {
+      case init_h:
       // Set board->dim to the correct size
       if(!strcmp(args[1], "tiny")) { board->dim = tiny; }
       else if(!strcmp(args[1], "small")) { board->dim = small; }
       else if(!strcmp(args[1], "standard")) { board->dim = standard; }
       else {
         printf("ERROR: Invalid size argument \'%s\' - expected either \'tiny\', \'small\', or \'standard\'\n", args[1]);
-        continue;
+        break;
       }
-
       // Fill grid with empty spaces
       for(i = 0; i < board->dim; i++) {
-        for(j = 0; j < board->dim; j++) {
-          board->grid[i][j] = empty;
+          for(j = 0; j < board->dim; j++) {
+            board->grid[i][j] = empty;
+          }
         }
-      }
-
       printf("New game created (board size %dx%d)\n", board->dim, board->dim);
-    }
-    else if(!strcmp(args[0], "show")) {
-      display(board);
-    }
-    else if(!strcmp(args[0], "move")) {
+      break;
+      /********************************/
+      case move_h:
       switch(argCount) {
-        case 3 : exitVal = move("!", args[1], args[2], board); _B;
-        case 4 : exitVal = move(args[1], args[2], args[3], board); _B;
-        default : exitVal = -99; _B;
-      }
+          case 3 : exitVal = move("!", args[1], args[2], board); _B;
+          case 4 : exitVal = move(args[1], args[2], args[3], board); _B;
+          default : exitVal = -99; _B;
+        }
       switch(exitVal) {
-        case 0 : _B; // An exit value of 0 indicates that move() completed successfully; this case is just here as a placeholder
-        case -99: printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
-        case -1 : printf("uh oh something is borken\n"); _B;
-        case 1 : printf("uh oh something is borken\n"); _B;
-        case 2 : printf("uh oh something is borken\n"); _B;
-        case 3 : printf("uh oh something is borken\n"); _B;
-        case 4 : printf("uh oh something is borken\n"); _B;
-        case 5 : printf("uh oh something is borken\n"); _B;
-      }
-    }
-    else if(!strcmp(args[0], "save")) {
-      saveGame(args[1], board);
-    }
-    else if(!strcmp(args[0], "load")) {
+          case 0 : _B; // An exit value of 0 indicates that move() completed successfully; this case is just here as a placeholder
+          case -99: printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
+          case -1 : printf("uh oh something is borken\n"); _B;
+          case 1 : printf("uh oh something is borken\n"); _B;
+          case 2 : printf("uh oh something is borken\n"); _B;
+          case 3 : printf("uh oh something is borken\n"); _B;
+          case 4 : printf("uh oh something is borken\n"); _B;
+          case 5 : printf("uh oh something is borken\n"); _B;
+        }
+      break;
+      /********************************/
+      case load_h:
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
-        case 0 : printf("\nGame data successfully loaded.\n"); _B;
-        case 1 : printf("\nERROR: Failed to open file.\n"); _B;
-        case 2 : printf("\nERROR: Invalid board size parameter.\n"); _B;
-        case 3 : printf("\nERROR: Invalid board state data.'\n"); _B;
-      }
-    }
-    else if(!strcmp(args[0], "help")) {
-      help();
-    }
-    else if(!strcmp(args[0], "quit")) {
-      // set loop to false so that loop ends
-      loop = 0;
-    }
-    else if(!strcmp(args[0], "")) {
-      // extra condition to prevent program from printing error message if user simply hits enter with no input
-      continue;
-    }
-    else {
-      // error message for invalid input
-      printf("ERROR: Unknown command \'%s\'. (Type \'help\' for a list of commands)\n", args[0]);
+          case 0 : printf("\nGame data successfully loaded.\n"); _B;
+          case 1 : printf("\nERROR: Failed to open file.\n"); _B;
+          case 2 : printf("\nERROR: Invalid board size parameter.\n"); _B;
+          case 3 : printf("\nERROR: Invalid board state data.'\n"); _B;
+        }
+      break;
+      /********************************/
+      // Print graphical representation of current board state to stdout
+      case show_h : display(board); _B;
+      // Save current board state to file
+      case save_h : saveGame(args[1], board); _B;
+      // Print help message
+      case help_h : help(); _B;
+      // Set loop to false so the while loop will exit after the current iteration
+      case quit_h : loop = 0; _B;
+      // Error message for invalid input
+      default : printf("ERROR: Unknown command \'%s\'. (Type \'help\' for a list of commands)\n", args[0]); _B;
     }
   }
 
