@@ -43,31 +43,33 @@ int main(int argc, char *argv[]) {
     fgets(cmd, CMD_LEN, stdin);
     argCount = cmdParse(cmd, args);
     if(!strcmp(args[0], "")) {
-      // Extra condition to prevent program from printing an error
-      // message if user simply hits enter without typing anything.
-      // (I left this as a standalone condition rather than putting
-      // it in the switch statement because I'm not sure how chash()
-      // will behave with an empty string as input)
+      // Extra condition to prevent program from printing an error message if user simply hits enter
+      // without typing anything. (I left this as a standalone condition rather than putting it in the
+      // switch statement because I'm not sure how chash() will behave with an empty string as input)
       continue;
     }
 
     switch(chash(args[0])) {
       case init_h:
       // Set board->dim to the correct size
-      if(!strcmp(args[1], "tiny")) { board->dim = tiny; }
-      else if(!strcmp(args[1], "small")) { board->dim = small; }
-      else if(!strcmp(args[1], "standard")) { board->dim = standard; }
-      else {
-        printf("ERROR: Invalid size argument \'%s\' - expected either \'tiny\', \'small\', or \'standard\'\n", args[1]);
-        break;
+      exitVal = 0;
+      switch(chash(args[1])) {
+        case tiny_h : board->dim = tiny; _B;
+        case small_h : board->dim = small; _B;
+        case standard_h : board->dim = standard; _B;
+        default : exitVal = 1; _B;
       }
-      // Fill grid with empty spaces
-      for(i = 0; i < board->dim; i++) {
-          for(j = 0; j < board->dim; j++) {
-            board->grid[i][j] = empty;
+      // Fill grid with empty spaces (assuming user input was valid)
+      if(exitVal) {
+        printf("ERROR: Invalid size argument \'%s\' - expected either \'tiny\', \'small\', or \'standard\'\n", args[1]);
+      } else {
+        for(i = 0; i < board->dim; i++) {
+            for(j = 0; j < board->dim; j++) {
+              board->grid[i][j] = empty;
+            }
           }
-        }
-      printf("New game created (board size %dx%d)\n", board->dim, board->dim);
+        printf("New game created (board size %dx%d)\n", board->dim, board->dim);
+      }
       break;
       /********************************/
       case move_h:
