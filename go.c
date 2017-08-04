@@ -5,6 +5,7 @@
 */
 
 #include "defs.h"
+#include "chash.h"
 
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
@@ -61,7 +62,7 @@ int main(int argc, char *argv[]) {
       printf("New game created (board size %dx%d)\n", board->dim, board->dim);
     }
     else if(!strcmp(args[0], "show")) {
-        display(board);
+      display(board);
     }
     else if(!strcmp(args[0], "move")) {
       switch(argCount) {
