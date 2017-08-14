@@ -25,3 +25,6 @@ hashes.h : calc.c chash.h cmdlist.dat
 	gcc -o calc calc.c
 	./calc cmdlist.dat > hashes.h
 	mv calc bin/
+
+hash : hashes.h
+.PHONY : hash

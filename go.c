@@ -50,13 +50,13 @@ int main(int argc, char *argv[]) {
     }
 
     switch(chash(args[0])) {
-      case init_h:
+      case init_case:
       // Set board->dim to the correct size
       exitVal = 0;
       switch(chash(args[1])) {
-        case tiny_h : board->dim = tiny; _B;
-        case small_h : board->dim = small; _B;
-        case standard_h : board->dim = standard; _B;
+        case tiny_case : board->dim = tiny; _B;
+        case small_case : board->dim = small; _B;
+        case standard_case : board->dim = standard; _B;
         default : exitVal = 1; _B;
       }
       // Fill grid with empty spaces (assuming user input was valid)
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
       }
       break;
       /********************************/
-      case move_h:
+      case move_case:
       switch(argCount) {
           case 3 : exitVal = move("!", args[1], args[2], board); _B;
           case 4 : exitVal = move(args[1], args[2], args[3], board); _B;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
         }
       switch(exitVal) {
           case 0 : _B; // An exit value of 0 indicates that move() completed successfully; this case is just here as a placeholder
-          case -99: printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d)", argCount); _B;
+          case -99: printf("ERROR: Invalid number of arguments (expected either 3 or 4; received %d\n)", argCount); _B;
           case -1 : printf("uh oh something is borken\n"); _B;
           case 1 : printf("uh oh something is borken\n"); _B;
           case 2 : printf("uh oh something is borken\n"); _B;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
         }
       break;
       /********************************/
-      case load_h:
+      case load_case:
       exitVal = loadGame(args[1], board);
       switch(exitVal) {
           case 0 : printf("\nGame data successfully loaded.\n"); _B;
@@ -101,13 +101,13 @@ int main(int argc, char *argv[]) {
       break;
       /********************************/
       // Print graphical representation of current board state to stdout
-      case show_h : display(board); _B;
+      case show_case : display(board); _B;
       // Save current board state to file
-      case save_h : saveGame(args[1], board); _B;
+      case save_case : saveGame(args[1], board); _B;
       // Print help message
-      case help_h : help(); _B;
+      case help_case : help(); _B;
       // Set loop to false so the while loop will exit after the current iteration
-      case quit_h : loop = 0; _B;
+      case quit_case : loop = 0; _B;
       // Error message for invalid input
       default : printf("ERROR: Unknown command \'%s\'. (Type \'help\' for a list of commands)\n", args[0]); _B;
     }
