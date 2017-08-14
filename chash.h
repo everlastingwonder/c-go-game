@@ -40,16 +40,20 @@ void hashdef(char *cmd_list) {
   FILE *fp = fopen(cmd_list, "r");
 
   printf("#ifndef _CONST_HASH_TMP_HEADER_\n");
-  printf("#define _CONST_HASH_TMP_HEADER_\n\n");
+  printf("#define _CONST_HASH_TMP_HEADER_\n");
 
   fscanf(fp, "%s", str);
   while(!feof(fp)) {
     hash = chash(str);
-    printf("#define %s_h %d\n", str, hash);
+    if(str[0] == '#') {
+      printf("\n#define %s_case %d", &str[1], hash);
+    } else {
+      printf(": case %d", hash);
+    }
     fscanf(fp, "%s", str);
   }
 
-  printf("\n#endif /* _CONST_HASH_TMP_HEADER_ */\n");
+  printf("\n\n#endif /* _CONST_HASH_TMP_HEADER_ */\n");
 }
 
 #endif /* _CHASH_H_ */
