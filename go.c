@@ -4,7 +4,7 @@
 * Version 0.2
 */
 
-#include "defs.h"
+#include "include/defs.h"
 
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);

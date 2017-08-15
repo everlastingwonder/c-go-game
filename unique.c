@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "chash.h"
+#include "include/chash.h"
 
 int main() {
   int hash;

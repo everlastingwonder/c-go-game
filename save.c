@@ -1,4 +1,4 @@
-#include "defs.h"
+#include "include/defs.h"
 
 void saveGame(char *fname, Board *board) {
   // Variable definitions

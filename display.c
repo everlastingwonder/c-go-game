@@ -1,4 +1,4 @@
-#include "defs.h"
+#include "include/defs.h"
 
 void display(Board *board) {
   // Variable definitions
