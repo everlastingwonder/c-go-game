@@ -1,5 +1,13 @@
 #include "defs.h"
 
+// Stupid macros (these do nothing whatsoever
+// for code efficiency and serve no purpose
+// except to make the code slightly easier to
+// understand at a glance)
+#define isEmpty(s) ((s == empty) ? 1 : 0)
+#define isWhite(s) ((s == white) ? 1 : 0)
+#define isBlack(s) ((s == black) ? 1 : 0)
+
 int move(char *r, char *c, char *state, Board *board) {
   // Variable definitions
   int row, col;
@@ -15,10 +23,8 @@ int move(char *r, char *c, char *state, Board *board) {
     if(!isalpha(c[0])) { return 2; }
   }
 
-  // Figure out what state the given space should be based on
-  // the first character of *state (rather than the whole string),
-  // because this allows us to use a nice neat switch statement
-  // instead of an ugly chain of ifs and else-ifs
+  // Use chash() to determine what state
+  // the given space should be set to
   switch(chash(state)) {
     case empty_case : sp = empty; _B;
     case white_case : sp = white; _B;
