@@ -1,4 +1,6 @@
+.DS_Store
 go
 bin/**
 *.dat
+.hconf_tmp
 !cmdlist.dat

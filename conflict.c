@@ -11,12 +11,11 @@ int main() {
   while(!feof(fp)) {
     if(str[0] == '#') {
       hash = chash(&str[1]);
-      //printf("%d (%s)\n", hash, &str[1]);
+      printf("%d (%s)\n", hash, &str[1]);
     } else {
       hash = chash(str);
-      //printf("%d (%s)\n", hash, str);
+      printf("%d (%s)\n", hash, str);
     }
-    printf("%d\n", hash);
     fscanf(fp, "%s", str);
   }
 }

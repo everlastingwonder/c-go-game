@@ -27,13 +27,15 @@ include/hashes.h : calc.c include/chash.h cmdlist.dat
 	mv calc bin/
 hash : include/hashes.h
 
-conflicts.dat : unique.c include/chash.h cmdlist.dat
-	gcc -o unique unique.c
-	./unique | sort -n | uniq -d > conflicts.dat
-	mv unique bin/
-unique : conflicts.dat
+hconf.dat : conflict.c include/chash.h cmdlist.dat
+	gcc -o conflict conflict.c
+	./conflict | sed 's/[^0-9]//g' | sort -n | uniq -d > .hconf_tmp
+	./conflict | grep --file=.hconf_tmp | sort -n > hconf.dat
+	rm .hconf_tmp
+	mv conflict bin/
+conf : hconf.dat
 
 include/defs.h : include/chash.h include/hashes.h
 defs : include/defs.h
 
-.PHONY : hash unique defs
+.PHONY : hash hconf defs
