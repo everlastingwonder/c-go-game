@@ -5,8 +5,6 @@
 */
 
 #include "defs.h"
-#include "chash.h"
-#include "hashes.h"
 
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
@@ -160,7 +158,7 @@ int cmdParse(char *cmd, char *args[]) {
       b = 0;
     }
     else {
-      args[a][b] = cmd[i];
+      args[a][b] = tolower(cmd[i]);
       b++;
     }
     i++;

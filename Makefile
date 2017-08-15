@@ -26,5 +26,10 @@ hashes.h : calc.c chash.h cmdlist.dat
 	./calc cmdlist.dat > hashes.h
 	mv calc bin/
 
+unique : unique.c cmdlist.dat
+	gcc -o unique unique.c
+	./unique | sort -n | uniq -d > conflicts.dat
+	mv unique bin/
+
 hash : hashes.h
 .PHONY : hash

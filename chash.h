@@ -2,9 +2,9 @@
 * chash.h
 * By Gus Wiedey
 *
-* A quick-and-dirty hash function in C, meant to
-* allow parsing user commands with switch statements
-* rather than ugly chains of ifs and else-ifs
+* A quick-and-dirty hash function in C that allows string
+* input to be parsed with switch statements (as opposed
+* to ugly chains of ifs and else-ifs).
 *
 * Note: Because C doesn't like switches with case
 * values that aren't compile-time constants, you
@@ -44,10 +44,11 @@ void hashdef(char *cmd_list) {
 
   fscanf(fp, "%s", str);
   while(!feof(fp)) {
-    hash = chash(str);
     if(str[0] == '#') {
+      hash = chash(&str[1]);
       printf("\n#define %s_case %d", &str[1], hash);
     } else {
+      hash = chash(str);
       printf(": case %d", hash);
     }
     fscanf(fp, "%s", str);

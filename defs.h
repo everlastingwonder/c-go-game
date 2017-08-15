@@ -6,6 +6,9 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "chash.h"
+#include "hashes.h"
+
 #define VER_NUM "v0.2"
 #define CMD_LEN 100
 #define ARG_MAX 5

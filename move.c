@@ -19,10 +19,10 @@ int move(char *r, char *c, char *state, Board *board) {
   // the first character of *state (rather than the whole string),
   // because this allows us to use a nice neat switch statement
   // instead of an ugly chain of ifs and else-ifs
-  switch(state[0]) {
-    case 'e' : sp = empty; _B;
-    case 'w' : sp = white; _B;
-    case 'b' : sp = black; _B;
+  switch(chash(state)) {
+    case empty_case : sp = empty; _B;
+    case white_case : sp = white; _B;
+    case black_case : sp = black; _B;
     default : return 3; _B;
   }
 
