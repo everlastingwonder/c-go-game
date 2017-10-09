@@ -3,4 +3,3 @@ go
 bin/**
 *.dat
 .hconf_tmp
-!cmdlist.dat
