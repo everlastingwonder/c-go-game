@@ -5,7 +5,7 @@
 int main() {
   int hash;
   char str[50];
-  FILE *fp = fopen("cmdlist.dat", "r");
+  FILE *fp = fopen("include/cmdlist", "r");
 
   fscanf(fp, "%s", str);
   while(!feof(fp)) {
