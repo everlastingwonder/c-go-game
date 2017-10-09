@@ -8,6 +8,7 @@
 
 int cmdParse(char*, char**);
 int move(char*, char*, char*, Board*);
+void update(int, int, Board*);
 void saveGame(char*, Board*);
 int loadGame(char*, Board*);
 void display(Board*);

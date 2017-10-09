@@ -1,13 +1,5 @@
 #include "include/defs.h"
 
-// Stupid macros (these do nothing whatsoever
-// for code efficiency and serve no purpose
-// except to make the code slightly easier to
-// understand at a glance)
-#define isEmpty(s) ((s == empty) ? 1 : 0)
-#define isWhite(s) ((s == white) ? 1 : 0)
-#define isBlack(s) ((s == black) ? 1 : 0)
-
 int move(char *r, char *c, char *state, Board *board) {
   // Variable definitions
   int row, col;
@@ -42,4 +34,25 @@ int move(char *r, char *c, char *state, Board *board) {
   // Change the actual space in board->grid and return 0 for success
   board->grid[row][col] = sp;
   return 0;
+}
+
+// UPDATE ALGORITHM PSEUDOCODE //
+/*
+*  WHEN a stone is placed,
+*    FOR EACH contiguous group of like-colored stones,
+*      IF THAT group has no adjacent empty spaces AND does not contain the most recently placed stone,
+*        THEN THAT group is removed,
+*        ELSE THAT group stays;
+*    IF the group containing the most recently placed stone has no adjacent empty spaces,
+*      THEN THAT group is removed,
+*      ELSE THAT group stays;
+*  END
+*/
+
+void update(int row, int col, Board *board) {
+  // Variable definitions
+  int i, j;
+  Space moveColor = board[row][col];
+
+  // Check each space adjacent to most recent move
 }

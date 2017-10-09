@@ -17,6 +17,7 @@
 #define _B break
 
 enum SPACE {
+  //edge = -1,
   empty = 0,
   white = 1,
   black = 2
